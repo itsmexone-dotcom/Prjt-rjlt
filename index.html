@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiBa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff00de;
+            --neon-blue: #00ffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0d0015;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Main Screen Container */
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-image: url('bg.jpg'); /* YOUR IMAGE */
+            background-size: cover;
+            background-position: center;
+            image-rendering: pixelated; 
+            overflow: hidden;
+        }
+
+        /* Dark overlay */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(13, 0, 21, 0.5);
+            z-index: 1;
+        }
+
+        /* TV Scanline Effect */
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%,
+                rgba(0,0,0,0.2)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* --- TEXT STYLES --- */
+        
+        .glitch-text {
+            color: white;
+            text-transform: uppercase;
+            text-shadow: 
+                3px 3px 0px var(--neon-pink), 
+                -2px -2px 0px var(--neon-blue);
+            animation: textGlitch 2.5s infinite alternate;
+            z-index: 20;
+            position: absolute;
+        }
+
+        /* HiBa Title - Top Right */
+        .title-hiba {
+            top: 40px;
+            right: 30px;
+            font-size: 2.5rem;
+        }
+
+        /* Center Quote */
+        .quote {
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        /* --- PIXEL CHARACTERS --- */
+        .sprite-container {
+            position: absolute;
+            bottom: 15%; /* Adjusted for mobile */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px; 
+            height: 150px;
+            z-index: 15;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            filter: drop-shadow(0 0 10px var(--neon-pink));
+        }
+
+        svg.pixel-scene {
+            width: 100%;
+            height: 100%;
+            shape-rendering: crispEdges; 
+        }
+
+        /* Heart Animation */
+        .heart {
+            transform-origin: center;
+            animation: heartBeat 1s infinite;
+        }
+
+        /* Music Button */
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-family: 'Press Start 2P', cursive;
+            padding: 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-shadow: 1px 1px #000;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes textGlitch {
+            0% { text-shadow: 3px 3px 0px var(--neon-pink), -2px -2px 0px var(--neon-blue); opacity: 1; }
+            20% { text-shadow: -3px -3px 0px var(--neon-pink), 2px 2px 0px var(--neon-blue); }
+            40% { text-shadow: 3px -3px 0px var(--neon-pink), -2px 2px 0px var(--neon-blue); }
+            50% { opacity: 0.8; }
+            60% { text-shadow: -2px 2px 0px var(--neon-pink), 2px -2px 0px var(--neon-blue); opacity: 1; }
+            100% { text-shadow: 3px 3px 0px var(--neon-pink), -2px -2px 0px var(--neon-blue); }
+        }
+
+        @keyframes heartBeat {
+            0% { transform: translateY(-38px) scale(1); } /* Adjusted Y for positioning */
+            25% { transform: translateY(-43px) scale(1.2); }
+            50% { transform: translateY(-38px) scale(1); }
+            75% { transform: translateY(-43px) scale(1.2); }
+            100% { transform: translateY(-38px) scale(1); }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 15px white; }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        /* Star Styles */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .title-hiba { font-size: 2rem; top: 20px; right: 20px; }
+            .quote { font-size: 0.9rem; top: 35%; }
+            .sprite-container { width: 220px; bottom: 15%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Element -->
+    <audio id="bg-music" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card" id="card">
+        <button id="music-btn" class="music-btn">🎵 Play Music</button>
+
+        <div class="overlay"></div>
+        <div class="scanlines"></div>
+
+        <!-- Name -->
+        <div class="glitch-text title-hiba">HiBa</div>
+
+        <!-- The Quote -->
+        <div class="glitch-text quote">
+            I love rjilatk so<br>show them to me please 👀
+        </div>
+
+        <!-- PIXEL ART SCENE -->
+        <div class="sprite-container">
+            <svg class="pixel-scene" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                
+                <!-- BOY (Kneeling Left) -->
+                <!-- Hair (Brown) -->
+                <path fill="#3e2723" d="M10 40 h5 v1 h1 v1 h1 v2 h-1 v1 h-1 v1 h-1 v-1 h-3 v-1 h-1 v-2 h-1 v-1 h1 v-1 z" />
+                <!-- Skin -->
+                <path fill="#ffdbac" d="M11 42 h3 v3 h-3 z M14 44 h2 v2 h-2 z" /> 
+                <!-- Shirt (Blue) -->
+                <path fill="#0055ff" d="M11 45 h5 v5 h-5 z" />
+                <!-- Pants (Dark Blue) -->
+                <path fill="#002288" d="M11 50 h4 v3 h2 v2 h-6 z" />
+                <!-- Arm reaching out -->
+                <path fill="#ffdbac" d="M15 46 h4 v2 h-4 z" />
+
+                <!-- GIRL (Standing Right) -->
+                <!-- Hair (BLACK - UPDATED) -->
+                <path fill="#000000" d="M40 38 h6 v1 h2 v2 h1 v8 h-2 v-6 h-1 v6 h-4 v-6 h-1 v6 h-2 v-8 h1 v-1 z" />
+                
+                <!-- Skin -->
+                <path fill="#ffdbac" d="M41 41 h4 v3 h-4 z M39 48 h2 v3 h-2 z M47 48 h2 v3 h-2 z" />
+                
+                <!-- Dress (Pink) -->
+                <path fill="#ff00de" d="M41 44 h4 v5 h2 v5 h-8 v-5 h2 v-5 z" />
+                
+                <!-- Shoes -->
+                <path fill="#111" d="M39 51 h2 v2 h-2 z M47 51 h2 v2 h-2 z" />
+
+                <!-- HEART (Floating in Middle) -->
+                <g class="heart">
+                    <path fill="#ff0000" d="M30 40 h2 v1 h2 v1 h1 v2 h-1 v1 h-1 v1 h-1 v1 h-1 v-1 h-1 v-1 h-1 v-1 h-1 v-2 h1 v-1 h2 v-1 z" />
+                    <!-- Shine on heart -->
+                    <path fill="#ffffff" d="M30 41 h1 v1 h-1 z" opacity="0.6"/>
+                </g>
+
+            </svg>
+        </div>
+
+    </div>
+
+    <script>
+        const card = document.getElementById('card');
+        const starCount = 50; 
+
+        // Music Control
+        const musicBtn = document.getElementById('music-btn');
+        const music = document.getElementById('bg-music');
+
+        musicBtn.addEventListener('click', () => {
+            if (music.paused) {
+                music.play();
+                musicBtn.textContent = "⏸ Pause";
+                musicBtn.style.color = "#ff00de"; // Pink when playing
+                musicBtn.style.borderColor = "#ff00de";
+            } else {
+                music.pause();
+                musicBtn.textContent = "🎵 Play Music";
+                musicBtn.style.color = "#00ffff"; // Blue when paused
+                musicBtn.style.borderColor = "#00ffff";
+            }
+        });
+
+        function createStar() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const size = Math.random() * 3 + 1; 
+            const duration = Math.random() * 1.5 + 0.5;
+            const delay = Math.random() * 2;
+
+            star.style.left = x + '%';
+            star.style.top = y + '%';
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            
+            if(Math.random() > 0.8) {
+                star.style.boxShadow = "0 0 10px 2px white";
+            }
+
+            star.style.animation = `twinkle ${duration}s infinite ${delay}s ease-in-out`;
+            card.appendChild(star);
+        }
+
+        for (let i = 0; i < starCount; i++) {
+            createStar();
+        }
+    </script>
+</body>
+</html>
